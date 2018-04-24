@@ -7,6 +7,18 @@ tags:
   - 技术
 ---
 
+#### 为什么要用flatbuffers
+|                                                        | FlatBuffers (binary)  | Protocol Buffers LITE | Rapid JSON            | FlatBuffers (JSON)     | pugixml               | Raw structs           |
+|--------------------------------------------------------|-----------------------|-----------------------|-----------------------|------------------------| ----------------------| ----------------------|
+| Decode + Traverse + Dealloc (1 million times, seconds) | 0.08                  | 302                   | 583                   | 105                    | 196                   | 0.02                  |
+| Decode / Traverse / Dealloc (breakdown)                | 0 / 0.08 / 0          | 220 / 0.15 / 81       | 294 / 0.9 / 287       | 70 / 0.08 / 35         | 41 / 3.9 / 150        | 0 / 0.02 / 0          |
+| Encode (1 million times, seconds)                      | 3.2                   | 185                   | 650                   | 169                    | 273                   | 0.15                  |
+| Wire format size (normal / zlib, bytes)                | 344 / 220             | 228 / 174             | 1475 / 322            | 1029 / 298             | 1137 / 341            | 312 / 187             |
+| Memory needed to store decoded wire (bytes / blocks)   | 0 / 0                 | 760 / 20              | 65689 / 4             | 328 / 1                | 34194 / 3             | 0 / 0                 |
+| Transient memory allocated during decode (KB)          | 0                     | 1                     | 131                   | 4                      | 34                    | 0                     |
+| Generated source code size (KB)                        | 4                     | 61                    | 0                     | 4                      | 0                     | 0                     |
+| Field access in handwritten traversal code             | typed accessors       | typed accessors       | manual error checking | typed accessors        | manual error checking | typed but no safety   |
+| Library source code (KB)                               | 15                    | some subset of 3800   | 87                    | 43                     | 327                   | 0                     |
 
 #### 环境配置
 - 下载flatbuffers源码
@@ -100,6 +112,16 @@ flatc -j[--java] sample_schema.fbs
 ```
 flatc -c[--cpp] sample_schema.fbs
 ```
+根据.proto文件生成.fbs(将protobuffer格式转为flatbuffer)
+
+```
+flatc --proto Person.proto
+```
+根据.fbs文件和.bin文件生成json
+
+```
+flatc -t schema.fbs -- binary.bin
+```
 
 根据schme文件和 json数据文件生成所对应的flatbuffers格式的数据文件
 
@@ -121,10 +143,10 @@ table People {
     index : long;
     guid : string;
     name : string;
-	gender : string;
-	company : string;
-	email : string;
-	friends : [Friend];
+    gender : string;
+    company : string;
+    email : string;
+    friends : [Friend];
 }
 
 table Friend {
@@ -198,7 +220,6 @@ java反序列化
             e.printStackTrace();
         }
 ```
-
 
 参考：[http://coolpers.github.io/](http://coolpers.github.io/)
 [https://www.jianshu.com/p/03a2e8918f8a](https://www.jianshu.com/p/03a2e8918f8a)
