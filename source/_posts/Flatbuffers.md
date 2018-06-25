@@ -6,8 +6,7 @@ comments: true
 tags: 
   - 技术
 ---
-
-#### 为什么要用flatbuffers
+#### 为什么要用flatbuffers [官网](https://google.github.io/flatbuffers/)
 |                                                        | FlatBuffers (binary)  | Protocol Buffers LITE | Rapid JSON            | FlatBuffers (JSON)     | pugixml               | Raw structs           |
 |--------------------------------------------------------|-----------------------|-----------------------|-----------------------|------------------------| ----------------------| ----------------------|
 | Decode + Traverse + Dealloc (1 million times, seconds) | 0.08                  | 302                   | 583                   | 105                    | 196                   | 0.02                  |
@@ -220,6 +219,7 @@ java反序列化
             e.printStackTrace();
         }
 ```
+
 
 参考：[http://coolpers.github.io/](http://coolpers.github.io/)
 [https://www.jianshu.com/p/03a2e8918f8a](https://www.jianshu.com/p/03a2e8918f8a)
