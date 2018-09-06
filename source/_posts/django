@@ -6,24 +6,9 @@ comments: true
 tags: 
   - 技术
 ---
-### 前言
-    
-本文旨在概述搭建一个具有负载均衡，高并发的django服务器的流程，包含环境准备到发布到云服务器及其一些细节的处理，并不包含django服务器的开发(可自行查阅资料),因为笔者大量查阅过
-网上一些教程，这方面的资料虽然很多，但是很多都会误导新手，而且其中更是错误百出，残差不齐，所以就有了这篇文章，把整个发布的流程记录下来，然而也不敢说此文没有一点错误，这错误会因每个人的生成环境的不一致而有不同的体现，倘若有些错误也是有益的，因为编程本来就是一个不断试错的过程，牛人之所以牛，无非就是踩过的坑比你多而已。
 
-* 非常强调:
 
-==不要使用Python3!==
-
-==不要使用Python3!==
-
-==不要使用Python3!==
-
-如果你要问我原因，我只能说现在远离它，一身轻松，
-
-==人生苦短，我用python2==
 #### 环境准备
-* 阿里云服务器一台 ubuntu16.04,本地mac一台
 
 * 连接服务器
 ```
@@ -54,19 +39,18 @@ sudo apt-get install libmysqlclient-dev
 ---
 
 * 搭建虚拟环境
-
-安装virtualenvwrapper(基于virtualenv的管理器)
+>  安装virtualenvwrapper
 
 ```
 pip install virtualenvwrapper
 ```
 
-查看python命令路径
+> 查看python命令路径
 ```
 which python     -> /usr/bin/python
 which python3    -> /usr/bin/python3
 ```
-配置环境变量
+> 配置环境变量
 ```
 =>Mac
 1.在.bash_profile中加入  
@@ -80,7 +64,7 @@ export WORKON_HOME=$HOME/.virtualenvs # 放所有虚拟环境的地方
 source /usr/local/bin/virtualenvwrapper.sh
 2.source .bashrc
 ```
-常用命令
+> 常用命令
 
 ```
  mkvirtualenv py2  创建环境
@@ -95,8 +79,7 @@ source /usr/local/bin/virtualenvwrapper.sh
  rmvirtualenv py2 删除虚拟环境
 ```
 * 依赖安装
-
- 1.首先在本地机器 项目生产依赖目录文件(上传项目前完成)
+ 1.首先在本地项目生产依赖目录文件
 ```
 pip freeze>requirements.txt
 ```
@@ -119,6 +102,11 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
+* 安装uwsgi
+
+```
+pip install uwsgi
+```
 #### 配置项目文件
 * 修改setting.py
 ```
@@ -152,12 +140,6 @@ sudo ufw allow 8000 # 或者保持防火墙开启，允许8000端口连接
 DEBUG=False
 ```
 #### 配置uwsgi
-
-* 安装uwsgi
-
-```
-pip install uwsgi
-```
 * 检查uwsgi服务是否正常
 ```
 创建一个test.py
@@ -167,7 +149,7 @@ def application(env, start_response):
     # return [b"Hello World"]  # python3
     
 uwsgi --http :8000 --wsgi-file test.py 运行
-127.0.0.1：8000  访问成功则表示服务正常
+127.0.0.1：8000  访问
 ```
 * uwsgi 配置
 ```
@@ -204,7 +186,7 @@ sudo apt-get install nginx
 * 配置
 
 ```
-在项目目录下运行下面命令 ，将uwsgi_params拷贝到项目文件夹下
+在项目目录下
 cp /etc/nginx/uwsgi_params .
 ```
 * 创建 my.nginx.conf
@@ -319,21 +301,8 @@ index-url = http://pypi.douban.com/simple
 [install] 
 trusted-host=pypi.douban.com
 ```
-* ssh连接工具
-    
-    Mac上可安装Shuttle来进行管理连接
-    
-    Windows安装xshell
 
 
-
-*参考资料
-
-[Djanog官方文档](https://www.djangoproject.com/start/)
-
-[https://www.cnblogs.com/qingspace/p/6838747.html](https://www.cnblogs.com/qingspace/p/6838747.html)
-
-[https://blog.csdn.net/m0_37887449/article/details/73086899](https://blog.csdn.net/m0_37887449/article/details/73086899)
 
 
 
